@@ -1092,7 +1092,7 @@
     <string name="friend_link_ritsu_lib_title">STS2-RitsuLib</string>
     <string name="friend_link_ritsu_lib_desc">BAKAOLC 製作的 STS2 MOD 支援庫。</string>
     <string name="friend_link_sts2_launcher_mod_manager_title">StS2 啟動器 MOD 管理器</string>
-    <string name="friend_link_sts2_launcher_mod_manager_desc">接入Steam的塔2啟動器，支援beta版和雲存檔，為本專案提供了穩定的MOD思路參考</string>
+    <string name="friend_link_sts2_launcher_mod_manager_desc">接入Steam的塔2啟動器，支援beta版和雲端存檔，為本專案提供了穩定的MOD思路參考</string>
     <string name="friend_link_workshop_android_downloader_title">WorkshopOnAndroid</string>
     <string name="friend_link_workshop_android_downloader_desc">Android Steam 創意工坊下載器參考專案，用於本啟動器的工坊瀏覽、下載和更新記錄支援。</string>
     <string name="payload_card_title">遊戲本體</string>
@@ -1283,18 +1283,18 @@
     <string name="no">否</string>
     <string name="unknown">未知</string>
     <string name="steam_account_title">Steam</string>
-    <string name="steam_account_open">Steam 帳號 / 下載 / 雲存檔</string>
+    <string name="steam_account_open">Steam 帳號 / 下載 / 雲端存檔</string>
     <string name="steam_account_status_title">Steam 帳號</string>
-    <string name="steam_account_status_subtitle">登入只用於你自己的 Steam 遊戲下載和 Steam 雲存檔同步。</string>
+    <string name="steam_account_status_subtitle">登入只用於你自己的 Steam 遊戲下載和 Steam 雲端存檔同步。</string>
     <string name="steam_account_safety_notice_title">Steam 帳號安全提示</string>
-    <string name="steam_account_safety_notice_message">• 本應用&lt;b&gt;不會上傳任何 Steam 帳號資訊&lt;/b&gt;，僅在本機儲存&lt;i&gt;refresh token&lt;/i&gt;。&lt;br/&gt;&lt;br/&gt;• 請只在從&lt;u&gt;可信來源&lt;/u&gt;下載的本應用中輸入 Steam 帳號資訊，確保帳號安全。&lt;br/&gt;&lt;br/&gt;• 安裝&lt;i&gt;未知 MOD&lt;/i&gt; 後，建議退出登入，避免潛在的惡意 MOD 讀取本機 RT 並盜取帳號的風險。&lt;br/&gt;&lt;br/&gt;• 使用&lt;b&gt;雲存檔&lt;/b&gt;時，建議&lt;u&gt;先進行備份&lt;/u&gt;，避免因為意外故障導致存檔丟失。&lt;br/&gt;&lt;br/&gt;• 國內使用 Steam 相關服務可能需要開啟&lt;i&gt;加速器&lt;/i&gt;。</string>
+    <string name="steam_account_safety_notice_message">• 本應用&lt;b&gt;不會上傳任何 Steam 帳號資訊&lt;/b&gt;，僅在本機儲存&lt;i&gt;refresh token&lt;/i&gt;。&lt;br/&gt;&lt;br/&gt;• 請只在從&lt;u&gt;可信來源&lt;/u&gt;下載的本應用中輸入 Steam 帳號資訊，確保帳號安全。&lt;br/&gt;&lt;br/&gt;• 安裝&lt;i&gt;未知 MOD&lt;/i&gt; 後，建議退出登入，避免潛在的惡意 MOD 讀取本機 RT 並盜取帳號的風險。&lt;br/&gt;&lt;br/&gt;• 使用&lt;b&gt;雲端存檔&lt;/b&gt;時，建議&lt;u&gt;先進行備份&lt;/u&gt;，避免因為意外故障導致存檔丟失。&lt;br/&gt;&lt;br/&gt;• 國內使用 Steam 相關服務可能需要開啟&lt;i&gt;加速器&lt;/i&gt;。</string>
     <string name="steam_account_safety_notice_wait_button">關閉(%1$d秒)</string>
     <string name="steam_account_safety_notice_ack_button">關閉</string>
     <string name="steam_account_safety_notice_open">安全說明</string>
     <string name="steam_not_logged_in">未登入</string>
     <string name="steam_account_status_format">帳號：%1$s
 SteamID64：%2$s
-雲存檔模式：%3$s %4$s</string>
+雲端存檔模式：%3$s %4$s</string>
     <string name="steam_login">登入</string>
     <string name="steam_verify_login">驗證權杖</string>
     <string name="steam_logout">退出登入</string>
@@ -1433,15 +1433,15 @@ SteamID64：%2$s
     <string name="steam_em_dash">—</string>
     <string name="steam_game_card_logged_in">Steam：已登入 %1$s</string>
     <string name="steam_game_card_not_logged_in">Steam：未登入</string>
-    <string name="steam_cloud_title">Steam 雲存檔</string>
+    <string name="steam_cloud_title">Steam 雲端存檔</string>
     <string name="steam_cloud_subtitle">將目前啟動設定檔的存檔根目錄與 Steam Cloud 同步。</string>
     <string name="cloud_save_namespace_hint">普通存檔：profile1–3/saves；MOD 存檔：modded/profile1–3/saves。兩套目錄均獨立同步，不自動移動或合併。遊戲只讀取目前 MOD 模式與 profile 槽位對應的一套，因此同步成功後進度仍可能不同。</string>
     <string name="cloud_mod_save_transfer_hint">PC 曾裝純 UI／快速重開 MOD 也可能使用 modded。手機不使用 MOD 時，先備份兩套存檔，再用「附加設定 → MOD存檔轉移」中的「MOD存檔 → 普通存檔」。此工具會覆蓋目標存檔，不能自動轉換含 MOD 內容的存檔。</string>
     <string name="steam_cloud_profile_status">設定：%1$s · 遠端檔案：%2$d · baseline：%3$s</string>
     <string name="steam_cloud_settings_status">Steam：%1$s · 模式：%2$s · 遠端檔案：%3$d</string>
-    <string name="steam_cloud_mode_title">雲存檔模式</string>
+    <string name="steam_cloud_mode_title">雲端存檔模式</string>
     <string name="steam_cloud_mode_off">關閉</string>
-    <string name="steam_cloud_mode_off_desc">不自動同步 Steam 雲存檔。</string>
+    <string name="steam_cloud_mode_off_desc">不自動同步 Steam 雲端存檔。</string>
     <string name="steam_cloud_mode_manual">僅手動</string>
     <string name="steam_cloud_mode_manual_desc">只在你點選重新整理 / 拉取 / 上傳時同步。</string>
     <string name="steam_cloud_mode_pull_on_launch">啟動前拉取</string>
@@ -1472,8 +1472,8 @@ SteamID64：%2$s
 
 可以開啟 Steam 中心處理、取消啟動，或使用本機存檔繼續啟動。</string>
     <string name="steam_cloud_open_center">Steam 中心</string>
-    <string name="cloud_operation_progress_title">雲存檔操作進行中</string>
-    <string name="webdav_cloud_title">WebDAV 雲存檔</string>
+    <string name="cloud_operation_progress_title">雲端存檔操作進行中</string>
+    <string name="webdav_cloud_title">WebDAV 雲端存檔</string>
     <string name="webdav_cloud_subtitle">將目前啟動設定檔的存檔根目錄與 WebDAV 網盤同步。</string>
     <string name="webdav_open_center">WebDAV 中心</string>
     <string name="webdav_connection_title">WebDAV 連線</string>
@@ -1499,7 +1499,7 @@ SteamID64：%2$s
     <string name="webdav_cloud_sync_subtitle">只同步目前啟動設定檔支援的 STS2 存檔檔案。遊戲本體和 MOD 不會上傳。</string>
     <string name="webdav_cloud_profile_status">設定：%1$s · 槽位：%2$s · 遠端檔案：%3$d · baseline：%4$s</string>
     <string name="webdav_cloud_settings_status">WebDAV：%1$s · 模式：%2$s · 遠端檔案：%3$d</string>
-    <string name="webdav_cloud_mode_title">雲存檔模式</string>
+    <string name="webdav_cloud_mode_title">雲端存檔模式</string>
     <string name="webdav_cloud_mode_off">關閉</string>
     <string name="webdav_cloud_mode_manual">僅手動</string>
     <string name="webdav_cloud_mode_pull_on_launch">啟動前拉取</string>
