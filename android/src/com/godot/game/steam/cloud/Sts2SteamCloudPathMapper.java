@@ -9,10 +9,17 @@ import java.util.Locale;
 
 public final class Sts2SteamCloudPathMapper {
 	private static final String AUTO_CLOUD_PREFIX = "%GameInstall%/";
+	private static final String MODDED_PREFIX = "modded/";
 	private final boolean includeSettingsSave;
+	private final boolean moddedAsMain;
 
 	public Sts2SteamCloudPathMapper(Context context) {
-		this.includeSettingsSave = SteamSettings.shouldSyncSettingsSave(context);
+		this(SteamSettings.shouldSyncSettingsSave(context), SteamSettings.shouldSyncModdedAsMain(context));
+	}
+
+	Sts2SteamCloudPathMapper(boolean includeSettingsSave, boolean moddedAsMain) {
+		this.includeSettingsSave = includeSettingsSave;
+		this.moddedAsMain = moddedAsMain;
 	}
 
 	public String toLocalRelativePath(String remotePath) {
@@ -20,19 +27,43 @@ public final class Sts2SteamCloudPathMapper {
 		if (normalized.regionMatches(true, 0, AUTO_CLOUD_PREFIX, 0, AUTO_CLOUD_PREFIX.length())) {
 			normalized = normalized.substring(AUTO_CLOUD_PREFIX.length());
 		}
-		if (!isSupportedLocalPath(normalized)) {
+		if (!isSupportedPath(normalized)) {
 			return "";
 		}
-		return normalized;
+		if (!moddedAsMain) {
+			return normalized;
+		}
+		// Local fork patch (PATCHES.md): the cloud's regular saves live in the local modded set.
+		// Cloud modded/ files are ignored so they cannot collide with that mapping.
+		String lower = normalized.toLowerCase(Locale.ROOT);
+		if (lower.startsWith(MODDED_PREFIX)) {
+			return "";
+		}
+		return "settings.save".equals(lower) ? normalized : MODDED_PREFIX + normalized;
 	}
 
 	public String toRemotePath(String localRelativePath) {
 		String normalized = normalize(localRelativePath);
-		return isSupportedLocalPath(normalized) ? normalized : "";
+		if (!isSupportedPath(normalized)) {
+			return "";
+		}
+		if (!moddedAsMain) {
+			return normalized;
+		}
+		String lower = normalized.toLowerCase(Locale.ROOT);
+		if ("settings.save".equals(lower)) {
+			return normalized;
+		}
+		// The local regular save set is not synced in this mode; it would overwrite the same cloud paths.
+		return lower.startsWith(MODDED_PREFIX) ? normalized.substring(MODDED_PREFIX.length()) : "";
 	}
 
 	public boolean isSupportedLocalPath(String localRelativePath) {
-		String path = normalize(localRelativePath);
+		return !toRemotePath(localRelativePath).isEmpty();
+	}
+
+	private boolean isSupportedPath(String relativePath) {
+		String path = normalize(relativePath);
 		if (path.isEmpty() || path.contains(":")) {
 			return false;
 		}

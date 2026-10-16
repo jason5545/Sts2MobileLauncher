@@ -1449,6 +1449,8 @@ SteamID64：%2$s
     <string name="steam_cloud_mode_full_auto">啟動前拉取 + 乾淨退出後上傳</string>
     <string name="steam_cloud_mode_full_auto_desc">啟動前拉取，乾淨退出後再上傳本機變更。</string>
     <string name="steam_cloud_sync_settings_save">同時同步 settings.save（實驗性）</string>
+    <string name="steam_cloud_sync_modded_as_main">MOD 存檔按普通存檔同步</string>
+    <string name="steam_cloud_sync_modded_as_main_hint">適用於本機只裝純 UI MOD（例如直向佈局）、PC 不裝 MOD 的情況。雲端普通存檔會拉到 modded 資料夾，modded 存檔會作為普通存檔上傳；此模式下本機普通存檔不參與同步。裝有新增卡牌、遺物等內容的 MOD 時不要開啟。</string>
     <string name="steam_cloud_refresh">重新整理清單</string>
     <string name="steam_cloud_pull">雲端拉取到本機</string>
     <string name="steam_cloud_push">上傳本機變化</string>

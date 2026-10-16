@@ -95,6 +95,7 @@ public class SteamAccountActivity extends AppCompatActivity {
 	private TextView cloudPathView;
 	private TextView cloudModeValueView;
 	private MaterialSwitch settingsSaveSwitch;
+	private MaterialSwitch moddedAsMainSwitch;
 	private View downloadSetupBlock;
 	private SteamDownloadProgressPanel downloadProgressPanel;
 	private MaterialCardView branchPublicCard;
@@ -980,6 +981,16 @@ public class SteamAccountActivity extends AppCompatActivity {
 		ExtraSettingsUi.addSmallSpacing(statusContent, settingsSaveSwitch);
 		TextView settingsHint = ExtraSettingsUi.caption(this, getString(R.string.steam_cloud_sync_settings_save_hint));
 		ExtraSettingsUi.addSmallSpacing(statusContent, settingsHint);
+
+		// Local fork patch (PATCHES.md): share progress between UI-only MOD setups and an unmodded PC.
+		moddedAsMainSwitch = new MaterialSwitch(this);
+		moddedAsMainSwitch.setText(R.string.steam_cloud_sync_modded_as_main);
+		moddedAsMainSwitch.setTextColor(ExtraSettingsUi.COLOR_ON_SURFACE);
+		moddedAsMainSwitch.setChecked(SteamSettings.shouldSyncModdedAsMain(this));
+		moddedAsMainSwitch.setOnCheckedChangeListener((button, checked) -> SteamSettings.setSyncModdedAsMain(this, checked));
+		ExtraSettingsUi.addSmallSpacing(statusContent, moddedAsMainSwitch);
+		TextView moddedAsMainHint = ExtraSettingsUi.caption(this, getString(R.string.steam_cloud_sync_modded_as_main_hint));
+		ExtraSettingsUi.addSmallSpacing(statusContent, moddedAsMainHint);
 		ExtraSettingsUi.addCardSpacing(root, statusCard);
 
 		LinearLayout actions = ExtraSettingsUi.vertical(this);
@@ -2141,6 +2152,9 @@ public class SteamAccountActivity extends AppCompatActivity {
 			}
 			if (settingsSaveSwitch != null && settingsSaveSwitch.isChecked() != SteamSettings.shouldSyncSettingsSave(this)) {
 				settingsSaveSwitch.setChecked(SteamSettings.shouldSyncSettingsSave(this));
+			}
+			if (moddedAsMainSwitch != null && moddedAsMainSwitch.isChecked() != SteamSettings.shouldSyncModdedAsMain(this)) {
+				moddedAsMainSwitch.setChecked(SteamSettings.shouldSyncModdedAsMain(this));
 			}
 		}
 	}

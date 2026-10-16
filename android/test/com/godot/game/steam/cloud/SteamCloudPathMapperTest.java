@@ -26,6 +26,7 @@ public class SteamCloudPathMapperTest {
     @Before public void setUp() {
         context = RuntimeEnvironment.getApplication();
         SteamSettings.setSyncSettingsSave(context, false);
+        SteamSettings.setSyncModdedAsMain(context, false);
         mapper = new Sts2SteamCloudPathMapper(context);
     }
 
@@ -80,5 +81,36 @@ public class SteamCloudPathMapperTest {
         Sts2SteamCloudPathMapper enabled = new Sts2SteamCloudPathMapper(context);
         assertEquals("settings.save", enabled.toLocalRelativePath("%GameInstall%\\settings.save"));
         assertEquals("settings.save", enabled.toRemotePath("settings.save"));
+    }
+
+    // Local fork patch (PATCHES.md): modded saves stand in for the cloud's regular saves.
+    @Test public void moddedAsMainMapsCloudRegularSavesToLocalModdedSet() {
+        SteamSettings.setSyncModdedAsMain(context, true);
+        Sts2SteamCloudPathMapper shared = new Sts2SteamCloudPathMapper(context);
+        for (String remote : List.of("profile.save", "profile1/saves/progress.save",
+                "profile2/saves/current_run_mp.save", "profile3/saves/history/20261007.run")) {
+            assertEquals("modded/" + remote, shared.toLocalRelativePath(remote));
+            assertEquals("modded/" + remote, shared.toLocalRelativePath("%GameInstall%/" + remote));
+            assertEquals(remote, shared.toRemotePath("modded/" + remote));
+            assertEquals(true, shared.isSupportedLocalPath("modded/" + remote));
+            // The local regular set would upload to the same cloud paths, so it is not synced.
+            assertEquals("", shared.toRemotePath(remote));
+            assertEquals(false, shared.isSupportedLocalPath(remote));
+        }
+        // Cloud modded/ files would collide with the mapping and are ignored.
+        assertEquals("", shared.toLocalRelativePath("modded/profile1/saves/progress.save"));
+        assertEquals("", shared.toLocalRelativePath("modded/profile.save"));
+        assertEquals("", shared.toRemotePath("modded/settings.save"));
+        assertEquals("", shared.toLocalRelativePath("profile4/saves/progress.save"));
+        assertEquals("", shared.toRemotePath("modded/../profile1/saves/progress.save"));
+    }
+
+    @Test public void moddedAsMainKeepsSettingsSaveAtRootAndOptIn() {
+        SteamSettings.setSyncModdedAsMain(context, true);
+        assertEquals("", new Sts2SteamCloudPathMapper(context).toRemotePath("settings.save"));
+        SteamSettings.setSyncSettingsSave(context, true);
+        Sts2SteamCloudPathMapper shared = new Sts2SteamCloudPathMapper(context);
+        assertEquals("settings.save", shared.toRemotePath("settings.save"));
+        assertEquals("settings.save", shared.toLocalRelativePath("settings.save"));
     }
 }

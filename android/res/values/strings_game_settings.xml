@@ -1451,6 +1451,8 @@ Last error: %4$s</string>
     <string name="steam_cloud_mode_full_auto">Pull before launch + push after clean exit</string>
     <string name="steam_cloud_mode_full_auto_desc">Pull before launch, then upload local changes after a clean exit.</string>
     <string name="steam_cloud_sync_settings_save">Also sync settings.save (experimental)</string>
+    <string name="steam_cloud_sync_modded_as_main">Sync MOD saves as regular saves</string>
+    <string name="steam_cloud_sync_modded_as_main_hint">For UI-only MODs on this device (such as a portrait layout) while the PC plays without MODs. Cloud regular saves are pulled into the modded folder, and modded saves are uploaded as regular saves. Local regular saves are not synced in this mode. Do not enable with MODs that add cards, relics or other content.</string>
     <string name="steam_cloud_refresh">Refresh list</string>
     <string name="steam_cloud_pull">Pull cloud to local</string>
     <string name="steam_cloud_push">Upload local changes</string>

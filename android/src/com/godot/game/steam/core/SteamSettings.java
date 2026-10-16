@@ -12,6 +12,7 @@ public final class SteamSettings {
 	private static final String PREFS_NAME = "sts2_steam_settings";
 	private static final String KEY_CLOUD_MODE = "cloud_mode";
 	private static final String KEY_SYNC_SETTINGS_SAVE = "sync_settings_save";
+	private static final String KEY_SYNC_MODDED_AS_MAIN = "sync_modded_as_main";
 	private static final String KEY_ACCOUNT_SAFETY_NOTICE_SEEN = "account_safety_notice_seen";
 	private static final String KEY_PAYLOAD_CONCURRENT_CHUNKS = "payload_concurrent_chunks";
 
@@ -39,6 +40,16 @@ public final class SteamSettings {
 
 	public static void setSyncSettingsSave(Context context, boolean enabled) {
 		prefs(context).edit().putBoolean(KEY_SYNC_SETTINGS_SAVE, enabled).apply();
+	}
+
+	// Local fork patch (PATCHES.md): sync the modded save set against the cloud's
+	// regular save paths, so UI-only MOD setups share progress with an unmodded PC.
+	public static boolean shouldSyncModdedAsMain(Context context) {
+		return prefs(context).getBoolean(KEY_SYNC_MODDED_AS_MAIN, false);
+	}
+
+	public static void setSyncModdedAsMain(Context context, boolean enabled) {
+		prefs(context).edit().putBoolean(KEY_SYNC_MODDED_AS_MAIN, enabled).apply();
 	}
 
 	public static boolean hasSeenAccountSafetyNotice(Context context) {
