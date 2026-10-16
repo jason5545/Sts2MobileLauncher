@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="log_detail_analyze">LLM 分析</string>
+    <string name="log_detail_expand_label">擴充套件範圍</string>
+    <string name="log_detail_expand_context">向前、向後各擴充套件 20 行</string>
+    <string name="log_detail_range_hint">已選取此行，可立即複製或分享；再點一個行號確定終點</string>
+</resources>
