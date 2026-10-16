@@ -856,11 +856,12 @@ final class DebugAutomationRunner {
 	}
 
 	private void startGameActivity(JSONObject details, boolean launchPrepared) throws Exception {
-		Intent gameIntent = new Intent(context, GodotApp.class);
+		Class<? extends GodotApp> gameActivity = GodotApp.launchActivityClass(context);
+		Intent gameIntent = new Intent(context, gameActivity);
 		gameIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		gameIntent.putExtra("launch_prepared", launchPrepared);
 		context.startActivity(gameIntent);
-		details.put("started_activity", "GodotApp");
+		details.put("started_activity", gameActivity.getSimpleName());
 		details.put("launch_prepared", launchPrepared);
 		putEvent("start_activity", "GodotApp");
 	}

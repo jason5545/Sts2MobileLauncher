@@ -82,6 +82,7 @@ public class GodotApp extends GodotActivity {
 	private static volatile boolean currentResumed;
 	private File gameDir;
 	private android.view.OrientationEventListener orientationEventListener;
+	private volatile String configuredRotationMode;
 	private InGameOverlayController inGameOverlayController;
 	private final HighRefreshRateController highRefreshRateController = new HighRefreshRateController();
 	private FloatingMouseInputController floatingMouseInputController;
@@ -677,7 +678,7 @@ public class GodotApp extends GodotActivity {
 	}
 
 	public static Intent createLaunchIntent(Context context, boolean forceNewLaunch) {
-		Intent intent = new Intent(context, GodotApp.class);
+		Intent intent = new Intent(context, launchActivityClass(context));
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		if (forceNewLaunch) {
 			intent.putExtra(getEXTRA_NEW_LAUNCH(), true);
@@ -776,22 +777,8 @@ public class GodotApp extends GodotActivity {
 	}
 
 	private void applyConfiguredScreenOrientation() {
-		String mode = ExtraSettingsRepository.SCREEN_ROTATION_USER_LANDSCAPE;
-		try {
-			File settingsFile = getSettingsFile();
-			if (settingsFile.isFile()) {
-				String content = readTextFile(settingsFile).trim();
-				if (!content.isEmpty()) {
-					JSONObject settings = new JSONObject(content);
-					String fallback = settings.optBoolean("android_flip_screen_180", false)
-						? ExtraSettingsRepository.SCREEN_ROTATION_REVERSE_LANDSCAPE
-						: ExtraSettingsRepository.SCREEN_ROTATION_USER_LANDSCAPE;
-					mode = ExtraSettingsRepository.normalizeScreenRotationMode(settings.optString(ExtraSettingsRepository.KEY_SCREEN_ROTATION_MODE, fallback));
-				}
-			}
-		} catch (Exception exception) {
-			Log.w(TAG, "Unable to read screen rotation mode; using auto.", exception);
-		}
+		String mode = readConfiguredScreenRotationMode(this);
+		configuredRotationMode = mode;
 
 		int orientation;
 		switch (mode) {
@@ -821,6 +808,62 @@ public class GodotApp extends GodotActivity {
 			setRequestedOrientation(orientation);
 		}
 		Log.i(TAG, "Configured GodotApp screen orientation mode=" + mode + " requestedOrientation=" + orientation);
+	}
+
+	/**
+	 * Local fork patch (PATCHES.md): Godot's Main::setup2 applies the game's project orientation
+	 * (landscape) through GodotIO.setScreenOrientation right after the renderer starts. In portrait
+	 * mode that rotated the display until the compat pack re-applied the setting about 15 s later.
+	 */
+	@Override
+	public void setRequestedOrientation(int requestedOrientation) {
+		if (ExtraSettingsRepository.SCREEN_ROTATION_PORTRAIT.equals(configuredRotationMode)
+			&& requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+			Log.i(TAG, "Keeping portrait orientation; replaced requestedOrientation=" + requestedOrientation);
+			requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+		}
+		super.setRequestedOrientation(requestedOrientation);
+	}
+
+	private static String readConfiguredScreenRotationMode(Context context) {
+		String mode = ExtraSettingsRepository.SCREEN_ROTATION_USER_LANDSCAPE;
+		try {
+			File settingsFile = new File(new LaunchProfileManager(context).getSelectedAccountRootDir(), SETTINGS_FILE_NAME);
+			if (settingsFile.isFile()) {
+				String content = readTextFile(settingsFile).trim();
+				if (!content.isEmpty()) {
+					JSONObject settings = new JSONObject(content);
+					String fallback = settings.optBoolean("android_flip_screen_180", false)
+						? ExtraSettingsRepository.SCREEN_ROTATION_REVERSE_LANDSCAPE
+						: ExtraSettingsRepository.SCREEN_ROTATION_USER_LANDSCAPE;
+					mode = ExtraSettingsRepository.normalizeScreenRotationMode(settings.optString(ExtraSettingsRepository.KEY_SCREEN_ROTATION_MODE, fallback));
+				}
+			}
+		} catch (Exception exception) {
+			Log.w(TAG, "Unable to read screen rotation mode; using auto.", exception);
+		}
+		return mode;
+	}
+
+	/**
+	 * Local fork patch (PATCHES.md): the window manager fixes a launching activity's rotation from
+	 * its manifest orientation before onCreate runs, and only re-evaluates it after the first frame.
+	 * Godot draws that frame after loading, so a portrait request made in onCreate left the game
+	 * in landscape for the whole load. Portrait launches use an activity declared portrait instead.
+	 */
+	static Class<? extends GodotApp> activityClassForConfiguredRotation(Context context) {
+		return ExtraSettingsRepository.SCREEN_ROTATION_PORTRAIT.equals(readConfiguredScreenRotationMode(context))
+			? GodotPortraitApp.class
+			: GodotApp.class;
+	}
+
+	/** Reuses a running game activity: two Godot activities in one process would start a second engine. */
+	static Class<? extends GodotApp> launchActivityClass(Context context) {
+		GodotApp running = currentInstance;
+		if (running != null && !running.isFinishing()) {
+			return running.getClass();
+		}
+		return activityClassForConfiguredRotation(context);
 	}
 
 	private void enableOrientationEventListener() {
@@ -896,7 +939,7 @@ public class GodotApp extends GodotActivity {
 		return new LaunchProfileManager(this).getSelectedAccountRootDir();
 	}
 
-	private String readTextFile(File file) throws Exception {
+	private static String readTextFile(File file) throws Exception {
 		try (InputStream inputStream = new FileInputStream(file);
 				 ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 			byte[] buffer = new byte[8192];
@@ -1107,7 +1150,8 @@ public class GodotApp extends GodotActivity {
 	private void restartGameAndExitProcess() {
 		try {
 			Log.i("GODOT", "[AndroidRestart] Restarting GodotApp and exiting process to clear Godot/Mono/NativeDetour state.");
-			Intent intent = new Intent(this, GodotApp.class);
+			// This process exits right after, so pick the class for the current setting, not the running one.
+			Intent intent = new Intent(this, activityClassForConfiguredRotation(this));
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 			intent.putExtra("launch_prepared", false);
 			startActivity(intent);
